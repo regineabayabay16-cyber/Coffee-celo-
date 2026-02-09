@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Café Casa Cielo | Premium Menu</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  font-family: 'Segoe UI', sans-serif;
+  background:#f6f3ef;
+  color:#3e2c23;
+}
+
+/* HEADER */
+header{
+  height:60vh;
+  background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.5)),
+  url("https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=1600&q=80");
+  background-size:cover;
+  background-position:center;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  text-align:center;
+}
+
+header h1{
+  font-size:3rem;
+  letter-spacing:2px;
+}
+
+/* SECTION */
+.section{
+  padding:60px 40px;
+}
+
+.section h2{
+  text-align:center;
+  margin-bottom:40px;
+  font-size:2rem;
+}
+
+/* GRID */
+.menu-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:30px;
+}
+
+.card{
+  background:white;
+  border-radius:15px;
+  box-shadow:0 8px 20px rgba(0,0,0,.08);
+  overflow:hidden;
+  transition:.3s;
+}
+
+.card:hover{
+  transform:translateY(-5px);
+}
+
+.card img{
+  width:100%;
+  height:220px;
+  object-fit:cover;
+}
+
+.card-content{
+  padding:15px;
+  text-align:center;
+}
+
+.price{
+  font-weight:bold;
+  margin:10px 0;
+}
+
+.qty{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin:10px 0;
+}
+
+.qty input{
+  width:50px;
+  text-align:center;
+}
+
+button{
+  background:#5d4037;
+  color:white;
+  border:none;
+  padding:8px 15px;
+  border-radius:6px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#3e2723;
+}
+
+/* CART */
+.cart-section{
+  background:#ebe5df;
+  padding:50px 30px;
+  text-align:center;
+}
+
+table{
+  width:90%;
+  margin:auto;
+  background:white;
+  border-collapse:collapse;
+}
+
+th,td{
+  padding:12px;
+  border-bottom:1px solid #ddd;
+}
+
+select,input{
+  padding:8px;
+  margin-top:10px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div>
+    <h1>Café Casa Cielo</h1>
+    <p>Premium Coffee • Fresh Pastries • Signature Cakes</p>
+  </div>
+</header>
+
+<!-- ================= COFFEE ================= -->
+<section class="section">
+<h2>☕ Coffee & Specialty Drinks</h2>
+<div class="menu-grid" id="coffee"></div>
+</section>
+
+<!-- ================= PASTRIES ================= -->
+<section class="section" style="background:#fdfaf7;">
+<h2>🥐 Fresh Pastries</h2>
+<div class="menu-grid" id="pastries"></div>
+</section>
+
+<!-- ================= CAKES ================= -->
+<section class="section">
+<h2>🍰 Signature Cakes</h2>
+<div class="menu-grid" id="cakes"></div>
+</section>
+
+<!-- ================= CART ================= -->
+<section class="cart-section">
+<h2>Your Order</h2>
+
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Qty</th>
+<th>Price</th>
+<th>Subtotal</th>
+</tr>
+</thead>
+<tbody id="cart"></tbody>
+</table>
+
+<h3>Total: ₱<span id="total">0</span></h3>
+
+<h3>Payment Method</h3>
+<select id="paymentMethod" onchange="togglePayment()">
+<option value="Cash">Cash</option>
+<option value="GCash">GCash</option>
+</select>
+
+<div id="cashBox">
+<br>
+<input type="number" id="cashAmount" placeholder="Enter cash" oninput="calculateChange()">
+<p>Change: ₱<span id="change">0</span></p>
+</div>
+
+<div id="gcashBox" style="display:none;">
+<br>
+<input type="text" id="gcashNumber" placeholder="Enter 11-digit GCash number">
+</div>
+
+<br><br>
+<button onclick="checkout()">Checkout</button>
+</section>
+
+<script>
+
+/* ================= PRODUCT DATA ================= */
+
+const coffeeItems = [
+["Espresso",120,"https://images.unsplash.com/photo-1510707577719-ae7c14805e9f?auto=format&fit=crop&w=600&q=80"],
+["Americano",130,"https://images.unsplash.com/photo-1551030173-122aabc4489c?auto=format&fit=crop&w=600&q=80"],
+["Cappuccino",140,"https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=600&q=80"],
+["Caramel Latte",150,"https://images.unsplash.com/photo-1572441713132-51c75654db73?auto=format&fit=crop&w=600&q=80"],
+["Mocha",160,"https://images.unsplash.com/photo-1511920170033-f8396924c348?auto=format&fit=crop&w=600&q=80"],
+["Matcha Latte",170,"https://images.unsplash.com/photo-1541167760496-1628856ab772?auto=format&fit=crop&w=600&q=80"],
+["Cold Brew",155,"https://images.unsplash.com/photo-1461023058943-07fcbe16d735?auto=format&fit=crop&w=600&q=80"],
+["Spanish Latte",165,"https://share.google/images/vnXbRtLQuGYacwdCv"]
+];
+
+const pastryItems = [
+["Butter Croissant",90,"https://images.unsplash.com/photo-1555507036-ab794f4adee5?auto=format&fit=crop&w=600&q=80"],
+["Chocolate Croissant",100,""],
+["Blueberry Muffin",95,"https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=600&q=80"],
+["Cinnamon Roll",110,"https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=600&q=80"],
+["Cheese Danish",115,""],
+["Garlic Bread",85,"https://images.unsplash.com/photo-1608198093002-ad4e005484ec?auto=format&fit=crop&w=600&q=80"]
+];
+
+const cakeItems = [
+["Chocolate Cake",180,"https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=600&q=80"],
+["Red Velvet Cake",200,"https://images.unsplash.com/photo-1601972599720-bf2e6fda36c5?auto=format&fit=crop&w=600&q=80"],
+["Cheesecake",190,"https://images.unsplash.com/photo-1542826438-bd32f43d626f?auto=format&fit=crop&w=600&q=80"],
+["Strawberry Shortcake",195,"https://images.unsplash.com/photo-1627308595229-7830a5c91f9f?auto=format&fit=crop&w=600&q=80"],
+["Carrot Cake",175,"https://images.unsplash.com/photo-1605478034237-38b9b13e5d29?auto=format&fit=crop&w=600&q=80"],
+["Tiramisu",210,"https://images.unsplash.com/photo-1571115764595-644a1f56a55c?auto=format&fit=crop&w=600&q=80"]
+];
+
+/* ================= RENDER ================= */
+
+let cart=[];
+
+function renderProducts(items, container){
+let html="";
+items.forEach((item,i)=>{
+html+=`
+<div class="card">
+<img src="${item[2]}">
+<div class="card-content">
+<h3>${item[0]}</h3>
+<p class="price">₱${item[1]}</p>
+<div class="qty">
+<button onclick="changeQty('${container+i}',-1)">−</button>
+<input type="number" id="${container+i}" value="1" min="1">
+<button onclick="changeQty('${container+i}',1)">+</button>
+</div>
+<button onclick="addToCart('${item[0]}',${item[1]},'${container+i}')">Add to Cart</button>
+</div>
+</div>`;
+});
+document.getElementById(container).innerHTML=html;
+}
+
+renderProducts(coffeeItems,"coffee");
+renderProducts(pastryItems,"pastries");
+renderProducts(cakeItems,"cakes");
+
+/* ================= CART ================= */
+
+function changeQty(id,change){
+let input=document.getElementById(id);
+let val=parseInt(input.value);
+val+=change;
+if(val<1) val=1;
+input.value=val;
+}
+
+function addToCart(name,price,id){
+let qty=parseInt(document.getElementById(id).value);
+let existing=cart.find(i=>i.name===name);
+if(existing){existing.qty+=qty;}
+else{cart.push({name,price,qty});}
+displayCart();
+}
+
+function displayCart(){
+let table=document.getElementById("cart");
+let total=0;
+table.innerHTML="";
+cart.forEach(item=>{
+let subtotal=item.price*item.qty;
+total+=subtotal;
+table.innerHTML+=`
+<tr>
+<td>${item.name}</td>
+<td>${item.qty}</td>
+<td>₱${item.price}</td>
+<td>₱${subtotal}</td>
+</tr>`;
+});
+document.getElementById("total").innerText=total;
+}
+
+function togglePayment(){
+let method=document.getElementById("paymentMethod").value;
+document.getElementById("cashBox").style.display=
+method==="Cash"?"block":"none";
+document.getElementById("gcashBox").style.display=
+method==="GCash"?"block":"none";
+}
+
+function calculateChange(){
+let total=parseFloat(document.getElementById("total").innerText);
+let cash=parseFloat(document.getElementById("cashAmount").value);
+if(!isNaN(cash)){
+let change=cash-total;
+document.getElementById("change").innerText=change>=0?change:0;
+}
+}
+
+function checkout(){
+if(cart.length===0){alert("Cart is empty!");return;}
+let method=document.getElementById("paymentMethod").value;
+let total=document.getElementById("total").innerText;
+
+if(method==="Cash"){
+let cash=parseFloat(document.getElementById("cashAmount").value);
+if(isNaN(cash)||cash<total){alert("Insufficient cash!");return;}
+}
+if(method==="GCash"){
+let num=document.getElementById("gcashNumber").value;
+if(num.length!==11){alert("Enter valid 11-digit GCash number.");return;}
+}
+
+alert("Payment Successful!\nMode: "+method+"\nTotal: ₱"+total);
+cart=[];
+displayCart();
+document.getElementById("cashAmount").value="";
+document.getElementById("gcashNumber").value="";
+document.getElementById("change").innerText="0";
+}
+</script>
+
+</body>
+  </html>
