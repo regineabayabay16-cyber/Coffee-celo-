@@ -1,0 +1,102 @@
+body {
+  margin: 0;
+  font-family: Arial;
+  background: #4E342E;
+  color: white;
+  text-align: center;
+}
+
+.landing {
+  height: 100vh;
+  background: url("https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=1500&q=80") center/cover;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-content {
+  background: rgba(0,0,0,0.6);
+  padding: 40px;
+  border-radius: 10px;
+}
+
+.btn {
+  padding: 10px 20px;
+  background: #D7CCC8;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 5px;
+}
+
+.menu-items {
+  display: grid;
+  grid-template-columns: repeat(auto-fit,minmax(250px,1fr));
+  gap: 20px;
+  padding: 20px;
+}
+
+.item {
+  background: white;
+  color: black;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.item img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.qty button {
+  padding: 5px 10px;
+}
+
+table {
+  width: 90%;
+  margin: auto;
+  background: white;
+  color: black;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+}
+
+.modal-content {
+  background: white;
+  color: black;
+  padding: 20px;
+  margin: 10% auto;
+  width: 90%;
+  max-width: 500px;
+  #cashSection {
+  margin-top: 10px;
+}
+
+.modal {
+  display: none;
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  top: 0;
+  left: 0;
+}
+
+.modal-content {
+  background: white;
+  color: black;
+  padding: 20px;
+  margin: 8% auto;
+  width: 90%;
+  max-width: 400px;
+  border-radius: 10px;
+}
+}
